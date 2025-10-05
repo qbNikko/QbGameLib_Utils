@@ -42,7 +42,7 @@ namespace QbGameLib_Utils.Component.Random
             return NextFloat2(rect.min,rect.max);
         }
         
-        public Vector3 GetRandomPositionOnBounds(Bounds bounds)
+        public Vector3 GetRandomPositionOnBounds(UnityEngine.Bounds bounds)
         {
             return NextFloat3(bounds.min,bounds.max);
         }
