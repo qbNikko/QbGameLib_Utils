@@ -1,0 +1,7 @@
+﻿{
+  "name": "QbGameLib_Utils.Test",
+  "rootNamespace": "QbGameLib_Utils",
+  "references": [
+    "QbGameLib_Utils"
+  ]
+}

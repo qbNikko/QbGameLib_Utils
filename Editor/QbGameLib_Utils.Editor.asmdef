@@ -1,0 +1,17 @@
+{
+    "name": "QbGameLib_Utils.Editor",
+    "rootNamespace": "QbGameLib_Utils",
+    "references": [
+        "QbGameLib_Utils",
+        "Unity.VisualScripting.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
