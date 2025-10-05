@@ -1,0 +1,17 @@
+{
+  "name": "com.qbnikko.qbgamelib_utils",
+  "version": "0.0.1",
+  "displayName": "Набор решений для unity",
+  "description": "Набор универсального функционала, для UNITY, который можно переиспользовать",
+  "unity": "6000.2",
+  "documentationUrl": "https://github.com/qbNikko/UnityGameLib#m/",
+  "changelogUrl": "https://github.com/qbNikko/UnityGameLib/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/qbNikko/UnityGameLib/blob/main/LICENSE.md",
+  "dependencies": {
+  },
+  "author": {
+    "name": "Николай Жульков",
+    "email": "qbNikko@yandex.ru",
+    "url": "https://github.com/qbNikko"
+  }
+}
