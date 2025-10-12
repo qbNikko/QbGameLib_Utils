@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace QbGameLib_Utils.Runtime.Attribute
+namespace QbGameLib_Utils.Attribute
 {
     [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, AllowMultiple = true, Inherited = true)]
     public class ResourceListAttribute : PropertyAttribute

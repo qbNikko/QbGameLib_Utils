@@ -1,18 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace QbGameLib_Utils.Component.Mb
 {
     public class PerformanceDebugPanel : MonoBehaviour
     {
+        [SerializeField] private int fontSize = 32;
         [SerializeField] bool showFps = false;
         private float fps = 30f;
-        
+        private GUIStyle _guiStyle;
+
+        private void Start()
+        {
+            _guiStyle = new GUIStyle();
+            _guiStyle.fontSize=fontSize;
+        }
+
         void OnGUI()
         {
             if(!showFps) return;
             float newFPS = 1.0f / Time.smoothDeltaTime;
             fps = Mathf.Lerp(fps, newFPS, 0.0005f);
-            GUI.Label(new Rect(0, 0, 100, 100), "FPS: " + (int)(1.0f / Time.smoothDeltaTime));
+            GUI.Label(new Rect(0, 0, 100, 100), "FPS: " + (int)(1.0f / Time.smoothDeltaTime),_guiStyle);
         }
     }
 }

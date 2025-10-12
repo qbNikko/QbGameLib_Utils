@@ -1,4 +1,5 @@
-﻿using QbGameLib_Utils.Reactive;
+﻿#if UNITY_EDITOR
+using QbGameLib_Utils.Reactive;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,3 +15,4 @@ namespace QbGameLib_Utils.Editor.Reactive
         }
     }
 }
+#endif

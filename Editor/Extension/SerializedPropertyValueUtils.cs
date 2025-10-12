@@ -1,4 +1,5 @@
-﻿using QbGameLib_Utils.Utils;
+﻿#if UNITY_EDITOR
+using QbGameLib_Utils.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -121,3 +122,4 @@ namespace QbGameLib_Utils.Editor.Extension
         }
     }
 }
+#endif

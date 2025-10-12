@@ -1,7 +1,18 @@
-﻿{
-  "name": "QbGameLib_Utils.Test",
-  "rootNamespace": "QbGameLib_Utils",
-  "references": [
-    "QbGameLib_Utils"
-  ]
+{
+    "name": "QbGameLib_Utils.Test",
+    "rootNamespace": "QbGameLib_Utils",
+    "references": [
+        "QbGameLib_Utils"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

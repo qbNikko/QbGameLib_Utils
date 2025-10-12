@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using IInitialized = QbGameLib_Utils.Interface.IInitialized;
 
-namespace QbGameLib_Utils.Component.Mb
+namespace QbGameLib_Utils.Component.Mb.Character
 {
     public class HealthComponent : MonoBehaviour, IInitialized
     {

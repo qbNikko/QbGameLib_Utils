@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using QbGameLib_Utils.Attribute;
 using QbGameLib_Utils.Extension;
-using QbGameLib_Utils.Runtime.Attribute;
 using UnityEditor;
 using UnityEngine;
 

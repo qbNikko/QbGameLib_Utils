@@ -2,6 +2,7 @@
   "name": "QbGameLib_Utils.Example",
   "rootNamespace": "QbGameLib_Utils",
   "references": [
-    "QbGameLib_Utils"
+    "QbGameLib_Utils",
+    "Unity.InputSystem"
   ]
 }

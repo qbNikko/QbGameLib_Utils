@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 namespace QbGameLib_Utils.Editor.Extension
@@ -37,3 +38,4 @@ namespace QbGameLib_Utils.Editor.Extension
 
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Linq;
 using QbGameLib_Utils.Collection;
 using QbGameLib_Utils.Editor.Extension;
@@ -8,7 +9,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace QbGameLib_Utils.Editor.Dictionary
+namespace QbGameLib_Utils.Dictionary
 {
     [CustomPropertyDrawer(typeof(DrawableDictionary), true)]
     public class DictionaryPropertyDrawer : PropertyDrawer
@@ -368,3 +369,4 @@ namespace QbGameLib_Utils.Editor.Dictionary
         }
     }
 }
+#endif

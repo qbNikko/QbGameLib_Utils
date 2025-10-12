@@ -4,9 +4,8 @@ using UnityEngine;
 namespace QbGameLib_Utils.Attribute
 {
     [AttributeUsage(System.AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
-    public class DictionaryAttribute: PropertyAttribute
+    public class TagAttribute :PropertyAttribute
     {
-        public string key;
-        public string value;
+        
     }
 }

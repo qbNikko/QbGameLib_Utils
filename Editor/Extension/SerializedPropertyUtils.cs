@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Linq;
 using System.Reflection;
 using QbGameLib_Utils.Utils;
@@ -280,3 +281,4 @@ namespace QbGameLib_Utils.Editor.Extension
         }
     }
 }
+#endif

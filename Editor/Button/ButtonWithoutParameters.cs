@@ -1,7 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Reflection;
-using QbGameLib_Utils.Runtime.Attribute;
+using QbGameLib_Utils.Attribute;
 using UnityEngine;
 
 namespace QbGameLib_Utils.Editor.Button

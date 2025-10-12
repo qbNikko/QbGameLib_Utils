@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using QbGameLib_Utils.Runtime.Attribute;
+using QbGameLib_Utils.Attribute;
 using QbGameLib_Utils.Utils;
 using Unity.VisualScripting;
 using UnityEditor;

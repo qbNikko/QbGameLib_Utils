@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace QbGameLib_Utils.Runtime.Attribute
+namespace QbGameLib_Utils.Attribute
 {
     public enum ButtonMode
     {
