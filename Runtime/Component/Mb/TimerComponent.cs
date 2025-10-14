@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using QbGameLib_Utils.Interface;
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 namespace QbGameLib_Utils.Component.Mb
 {
@@ -14,9 +16,18 @@ namespace QbGameLib_Utils.Component.Mb
         Hour
     }
     /**
+     * Тип таймера
+     */
+    public enum TimerType
+    {
+        Timer, 
+        Delay
+    }
+    
+    /**
      * Реализация таймера
      */
-    public class TimerComponent : MonoBehaviour
+    public class TimerComponent : MonoBehaviour,IStartCancelInputHandler
     {
         /**
          * Событие прохождения таймера
@@ -34,7 +45,11 @@ namespace QbGameLib_Utils.Component.Mb
          * Зацикленный таймер
          */
         [SerializeField] public bool Loop;
-
+        
+        /**
+        * Тип таймера
+        */
+        [SerializeField] public TimerType timerType = TimerType.Timer;
         private float _currentTime;
         private float _waitTime;
 
@@ -72,11 +87,14 @@ namespace QbGameLib_Utils.Component.Mb
             else if (_timeUnit == TimeUnit.Millisecond) _waitTime = timer/1000;
             else if (_timeUnit == TimeUnit.Minute) _waitTime = timer*60;
             else if (_timeUnit == TimeUnit.Hour) _waitTime = timer*60*60;
+            if (timerType == TimerType.Delay) _currentTime = _waitTime + 1;
+            else _currentTime = 0;
         }
 
         public void Reset()
         {
-            _currentTime = 0;
+            if (timerType == TimerType.Delay) _currentTime = _waitTime + 1;
+            else _currentTime = 0;
         }
 
         private void Update()
@@ -88,6 +106,17 @@ namespace QbGameLib_Utils.Component.Mb
                 OnTimeout.Invoke();
                 if(!Loop) enabled = false;
             }
+        }
+
+        public void OnStart(InputAction.CallbackContext context)
+        {
+            enabled = true;
+        }
+
+        public void OnCancel(InputAction.CallbackContext context)
+        {
+            Reset();
+            enabled = false;
         }
     }
 }

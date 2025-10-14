@@ -84,7 +84,7 @@ namespace QbGameLib_Utils.Component.Mb.Character
             {
                 _cameraRotateAnchor = new GameObject("CameraRotateAnchor");
                 _cameraRotateAnchor.transform.parent = _parent.transform;
-                _cameraRotateAnchor.transform.Rotate(Vector3.up,180);
+                // _cameraRotateAnchor.transform.Rotate(Vector3.up,180);
                 _cameraRotateAnchor.transform.localPosition = Vector3.zero;
                 _camera.transform.parent = _cameraRotateAnchor.transform;
                 _camera.transform.localPosition = _offset;

@@ -1,8 +1,18 @@
-﻿{
-  "name": "QbGameLib_Utils.Example",
-  "rootNamespace": "QbGameLib_Utils",
-  "references": [
-    "QbGameLib_Utils",
-    "Unity.InputSystem"
-  ]
+{
+    "name": "QbGameLib_Utils.Example",
+    "rootNamespace": "QbGameLib_Utils",
+    "references": [
+        "QbGameLib_Utils",
+        "Unity.InputSystem",
+        "QbGameLib_Bullet"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

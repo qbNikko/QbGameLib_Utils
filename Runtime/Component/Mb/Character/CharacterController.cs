@@ -15,6 +15,8 @@ namespace QbGameLib_Utils.Component.Mb.Character
         public float jumpCount = 2f;
         public float jumpForce = 5f;
         public bool stayWithoutDump = true;
+        public LayerMask slideMask = Physics.AllLayers;
+        public Vector3 detectCollideSlideOffset = Vector3.zero;
     }
 
     [Serializable]
@@ -129,7 +131,7 @@ namespace QbGameLib_Utils.Component.Mb.Character
 
         private void OnValidate()
         {
-            if (Application.isPlaying == true)
+            if (Application.isPlaying == true && _rb!=null)
             {
                 ReinitStrategy();
             }
@@ -137,16 +139,17 @@ namespace QbGameLib_Utils.Component.Mb.Character
 
         public void ReinitStrategy()
         {
-            _moveStrategy = new HorizontalMoveStrategy(_rb, moveParameters.speed, moveParameters.maxForce);
+            LayerMask mask = LayerMask.GetMask();
+            _moveStrategy = new HorizontalMoveStrategy(_rb, moveParameters.speed, moveParameters.maxForce).SetSlide(new SlideParameters(moveParameters.slideMask, moveParameters.detectCollideSlideOffset));
             _ladderStrategy = new VerticalMoveStrategy(_rb, moveParameters.speed, moveParameters.maxForce);
             _sprintStrategy = new TimedMoveStrategy(
                 new HorizontalMoveStrategy(_rb, sprintParameters.sprintSpeed * moveParameters.speed,
-                    sprintParameters.sprintMaxForce),
+                    sprintParameters.sprintMaxForce).SetSlide(new SlideParameters(moveParameters.slideMask, moveParameters.detectCollideSlideOffset)),
                 sprintParameters.sprintTimeout, sprintParameters.sprintReloadTimeout, UseStrategy.part_full
             );
             _dashStrategy = new TimedMoveStrategy(
                 new HorizontalMoveStrategy(_rb, dashParameters.dashSpeed * moveParameters.speed,
-                    dashParameters.dashMaxForce),
+                    dashParameters.dashMaxForce).SetSlide(new SlideParameters(moveParameters.slideMask, moveParameters.detectCollideSlideOffset)),
                 dashParameters.dashTimeout, dashParameters.dashReloadTimeout, UseStrategy.full
             );
         }
@@ -221,10 +224,12 @@ namespace QbGameLib_Utils.Component.Mb.Character
             _cameraController.Rotate(_look);
         }
 
+        private bool stop;
         private void Move()
         {
             if (_move != Vector2.zero || !_stay)
             {
+                stop =  false;
                 if (_dash && _dashStrategy.Allow())
                 {
                     _dashStrategy.Move(Time.fixedDeltaTime, _move);
@@ -237,18 +242,29 @@ namespace QbGameLib_Utils.Component.Mb.Character
                     events.onSprintCountAllowEvent.Invoke(_sprintStrategy.AllowPercent());
                     if (!_sprintStrategy.Allow()) events.onSprintReloadEvent.Invoke(true);
                 }
-                else
-                {
-                    if (_ladder && _ladderStrategy.Allow())
-                        _ladderStrategy.Move(Time.fixedDeltaTime, _move);
-                    if ((!_stay || moveParameters.stayWithoutDump) && _moveStrategy.Allow())
-                        _moveStrategy.Move(Time.fixedDeltaTime, _move);
-                }
-
                 _stay = _move == Vector2.zero;
+            }
+            if (!_dash && !_sprint)
+            {
+                if (_ladder && _ladderStrategy.Allow())
+                    _ladderStrategy.Move(Time.fixedDeltaTime, _move);
+                if ((!_stay || (moveParameters.stayWithoutDump || !stop)) && _moveStrategy.Allow())
+                    _moveStrategy.Move(Time.fixedDeltaTime, _move);
+            }
+
+            if (_rb.linearVelocity.magnitude>=0.00001f)
+            {
                 events.speedEvent.Invoke(_rb.linearVelocity.magnitude);
                 events.moveVectorEvent.Invoke(_rb.linearVelocity.normalized);
             }
+            else if (!stop)
+            {
+                stop = true;
+                events.speedEvent.Invoke(0);
+                events.moveVectorEvent.Invoke(Vector3.zero);
+            }
+            
+            
         }
 
         private void CameraZoom()
@@ -277,8 +293,27 @@ namespace QbGameLib_Utils.Component.Mb.Character
         private void OnDrawGizmosSelected()
         {
 #if UNITY_EDITOR
-            Gizmos.color = new Color(0f, 255, 0f, 0.2f);
-            Gizmos.DrawLine(transform.position, transform.position + transform.forward * 2);
+            if(!Application.isPlaying) return;
+            HorizontalMoveStrategy moveStrategy = _moveStrategy as HorizontalMoveStrategy;
+            CalculateData moveData = moveStrategy.MoveData;
+            Gizmos.color = new Color(0f, 255, 0f, 1f);
+            Gizmos.DrawSphere(moveParameters.detectCollideSlideOffset + transform.position, moveData.radius);
+            Gizmos.DrawLine(moveParameters.detectCollideSlideOffset + transform.position, moveParameters.detectCollideSlideOffset + transform.position+moveData.moveVector);
+            
+            Gizmos.color = new Color(0f, 0f, 255f, 1f);
+            Vector3 lastVector = moveParameters.detectCollideSlideOffset + transform.position;
+            foreach (SlideData data in moveData.slideData)
+            {
+                Gizmos.color = new Color(0f, 0f, 255f, 1f);
+                Gizmos.DrawLine(lastVector, lastVector+data.snapSurface);
+                Gizmos.DrawCube(lastVector+data.snapSurface, new Vector3(0.05f, 0.05f, 0.05f));
+                Gizmos.DrawLine(lastVector+data.snapSurface, lastVector+data.ower+data.snapSurface);
+                Gizmos.DrawSphere(lastVector+data.ower+data.snapSurface, 0.05f);
+                Gizmos.color = new Color(255f, 0f, 0f, 1f);
+                Gizmos.DrawLine(data.hit.point, data.hit.point+data.hit.normal);
+                Gizmos.DrawSphere(data.hit.point, 0.05f);
+                lastVector = moveParameters.detectCollideSlideOffset + transform.position+data.snapSurface+data.ower;
+            }
 #endif
         }
     }

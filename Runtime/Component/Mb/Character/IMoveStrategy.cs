@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace QbGameLib_Utils.Component.Mb.Character
 {
@@ -27,6 +28,7 @@ namespace QbGameLib_Utils.Component.Mb.Character
             _speed =  speed;
             _maxSpeed = maxSpeed;
             _transform = rb.transform;
+            
         }
 
         public abstract void Move(float deltaTime, Vector3 move);
@@ -39,21 +41,130 @@ namespace QbGameLib_Utils.Component.Mb.Character
         {}
     }
 
+    public struct CalculateData
+    {
+        public Vector3 moveVector;
+        public Vector3 snapSurvace;
+        public float radius;
+        public List<SlideData> slideData;
+    }
+
+    public struct SlideData
+    {
+        public Vector3 snapSurface;
+        public RaycastHit hit;
+        public Vector3 ower;
+
+        public SlideData(Vector3 snapSurface, RaycastHit hit,Vector3 ower)
+        {
+            this.snapSurface = snapSurface;
+            this.hit = hit;
+            this.ower = ower;
+        }
+    }
+
+    public struct SlideParameters
+    {
+        public LayerMask LayerMask;
+        public Vector3 CollisionDetectOffset;
+        public float AllowAngleLimit;
+        public float FreezAngleLimit;
+        public float StopAngleLimit;
+
+        public SlideParameters(LayerMask layerMask, Vector3 collisionDetectOffset, float allowAngleLimit = 10f, float freezAngleLimit = 25f, float stopAngleLimit = 85f)
+        {
+            LayerMask = layerMask!= null ? layerMask : ~(1 << LayerMask.NameToLayer("Default"));
+            CollisionDetectOffset = collisionDetectOffset;
+            AllowAngleLimit = allowAngleLimit;
+            FreezAngleLimit = freezAngleLimit;
+            StopAngleLimit = stopAngleLimit;
+        }
+    }
     public class HorizontalMoveStrategy : RigidbodyMoveStrategy
     {
+        private const float _skinWeight = 0.015f;
+        private float slopeAngle = 55;
+        private float _radius;
+        private SlideParameters _slideParameters;
+        public CalculateData MoveData;
+        private bool allowSlide = false;
         
         public HorizontalMoveStrategy(Rigidbody rb, float speed, float maxSpeed) : base(rb, speed,  maxSpeed)
         {
+            allowSlide = false;
+            Collider component = rb.GetComponent<Collider>();
+            _radius = component.bounds.extents.x;
+            MoveData = new CalculateData();
+            MoveData.radius = _radius;
+            MoveData.slideData = new List<SlideData>();
         }
+
+        public HorizontalMoveStrategy SetSlide(SlideParameters slideParameters)
+        {
+            _slideParameters = slideParameters;
+            allowSlide = true;
+            return this;
+        }
+        
 
         public override void Move(float deltaTime, Vector3 move)
         {
+            
             Vector3 moveVector = new Vector3(move.x,0,move.y)*_speed;
             moveVector = _transform.TransformDirection(moveVector);
             Vector3 velocityChange = moveVector-_rb.linearVelocity;
             velocityChange.y = 0;
             velocityChange = Vector3.ClampMagnitude(velocityChange, _maxSpeed);
+            if (move != Vector3.zero && allowSlide)
+            {
+                MoveData.moveVector = velocityChange;
+                MoveData.slideData.Clear();
+                velocityChange = CalculateSlide(velocityChange, _transform.position);
+            }
             _rb.AddForce(velocityChange, ForceMode.VelocityChange);
+        }
+
+        private Vector3 CalculateSlide(Vector3 velocityChange, Vector3 position)
+        {
+            Vector3 direction = velocityChange.normalized;
+            if (Physics.SphereCast(_slideParameters.CollisionDetectOffset + position, _radius-_skinWeight, direction, out RaycastHit hit, velocityChange.magnitude+_skinWeight, _slideParameters.LayerMask))
+            {
+                Vector3 snapSurface = velocityChange.normalized*(hit.distance-_skinWeight);
+                if(snapSurface.magnitude<=_skinWeight) snapSurface = Vector3.zero;
+                Vector3 ower = velocityChange - snapSurface;
+                float angle = Vector3.Angle(Vector3.up, hit.normal);
+                if (angle <= _slideParameters.AllowAngleLimit)
+                {
+                    ower = ProjectAndScale(ower, hit.normal);
+                }
+                else if (angle <= _slideParameters.FreezAngleLimit)
+                {
+                    ower = Vector3.zero;
+                }
+                else if (angle <= _slideParameters.StopAngleLimit)
+                {
+                    snapSurface.y = -0.2f;
+                    ower = ProjectAndScale(ower, hit.normal);
+                    ower.y = 0;
+                }
+                else
+                {
+                    ower = ProjectAndScale(ower, hit.normal);
+                    ower.y = 0;
+                }
+                MoveData.slideData.Add(new SlideData(snapSurface,hit, ower));
+                return snapSurface + ower;
+            }
+
+            return velocityChange;
+        }
+
+        private static Vector3 ProjectAndScale(Vector3 ower, Vector3 normal)
+        {
+            float magnitude = ower.magnitude;
+            ower = Vector3.ProjectOnPlane(ower,normal).normalized;
+            ower *= magnitude;
+            return ower;
         }
     }
     
